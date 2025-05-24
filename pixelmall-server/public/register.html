@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Регистрация / Вход — PixelMall</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      width: 320px;
+      z-index: 1000;
+    }
+    
+    .auth-popup h2 {
+      margin-top: 0;
+      text-align: center;
+      color: #333;
+    }
+    
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .auth-tab.active {
+      border-bottom: 2px solid #ff3366;
+      color: #ff3366;
+    }
+    
+    .auth-form {
+      display: none;
+    }
+    
+    .auth-form.active {
+      display: block;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #555;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    
+    .auth-btn {
+      width: 100%;
+      padding: 10px;
+      background: #ff3366;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #999;
+      transition: transform 0.2s ease;
+    }
+    
+    .close-btn:hover {
+      transform: scale(1.2);
+      color: #ff3366;
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay" id="auth-overlay"></div>
+  <div class="auth-popup" id="auth-popup">
+    <button class="close-btn" id="close-auth">&times;</button>
+    <h2>Вход в аккаунт</h2>
+    
+    <div class="auth-tabs">
+      <div class="auth-tab active" data-tab="login">Вход</div>
+      <div class="auth-tab" data-tab="register">Регистрация</div>
+    </div>
+    
+    <form id="login-form" class="auth-form active">
+      <div class="form-group">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" required>
+      </div>
+      <div class="form-group">
+        <label for="login-password">Пароль</label>
+        <input type="password" id="login-password" required>
+      </div>
+      <button type="submit" class="auth-btn">Войти</button>
+    </form>
+    
+    <form id="register-form" class="auth-form">
+      <div class="form-group">
+        <label for="reg-email">Email</label>
+        <input type="email" id="reg-email" required>
+      </div>
+      <div class="form-group">
+        <label for="reg-password">Пароль</label>
+        <input type="password" id="reg-password" required>
+      </div>
+      <div class="form-group">
+        <label for="reg-confirm">Подтвердите пароль</label>
+        <input type="password" id="reg-confirm" required>
+      </div>
+      <button type="submit" class="auth-btn">Зарегистрироваться</button>
+    </form>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Переключение между вкладками
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        
+        document.querySelectorAll('.auth-form').forEach(form => {
+          form.classList.remove('active');
+        });
+        
+        document.getElementById(`${this.dataset.tab}-form`).classList.add('active');
+      });
+    });
+
+    // Закрытие попапа и переход на главную
+    document.getElementById('close-auth').addEventListener('click', function() {
+      window.location.href = 'index.html';
+    });
+    
+    document.getElementById('auth-overlay').addEventListener('click', function() {
+      window.location.href = 'index.html';
+    });
+
+    // Обработка формы входа
+    document.getElementById('register-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const email = document.getElementById('reg-email').value;
+  const password = document.getElementById('reg-password').value;
+
+  try {
+    // Замените хардкодный URL на относительный
+const response = await fetch('/api/register', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password })
+});
+    
+    const user = await response.json();
+    localStorage.setItem('user', JSON.stringify(user));
+    window.location.href = 'account.html';
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Ошибка регистрации');
+  }
+    });
+
+    // Обработка формы регистрации
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      const confirm = document.getElementById('reg-confirm').value;
+      
+      if (password !== confirm) {
+        alert('Пароли не совпадают');
+        return;
+      }
+      
+      if (email && password) {
+        const user = {
+          email: email,
+          name: email.split('@')[0],
+          phone: '',
+          address: ''
+        };
+        
+        localStorage.setItem('user', JSON.stringify(user));
+        setTimeout(() => {
+          window.location.href = 'account.html';
+        }, 100);
+      } else {
+        alert('Пожалуйста, заполните все поля');
+      }
+    });
+
+    // Показать попап при загрузке
+    window.onload = function() {
+      document.getElementById('auth-popup').style.display = 'block';
+      document.getElementById('auth-overlay').style.display = 'block';
+    };
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>

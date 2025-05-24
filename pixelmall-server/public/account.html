@@ -1,0 +1,469 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Личный кабинет — PixelMall</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .account-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .account-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .account-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .account-tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .account-tab.active {
+      border-bottom: 2px solid #ff3366;
+      font-weight: bold;
+    }
+    
+    .account-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .profile-info {
+      position: relative;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+    
+    .edit-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #005BFF;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .edit-btn:hover {
+      text-decoration: underline;
+    }
+    
+    .edit-form {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid #eee;
+    }
+    
+    .edit-form.active {
+      display: block;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    
+    .form-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    
+    .save-btn, .cancel-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+    
+    .save-btn {
+      background: #ff3366;
+      color: white;
+    }
+    
+    .save-btn:hover {
+      background: #e62e5c;
+    }
+    
+    .cancel-btn {
+      background: #eee;
+      color: #333;
+    }
+    
+    .cancel-btn:hover {
+      background: #ddd;
+    }
+    
+    .order-card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #eee;
+    }
+    
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    
+    .order-status {
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 14px;
+    }
+    
+    .status-new { background: #E3F2FD; color: #0D47A1; }
+    .status-completed { background: #E8F5E9; color: #2E7D32; }
+    .status-cancelled { background: #FFEBEE; color: #C62828; }
+    
+    .product-item {
+      display: flex;
+      margin: 10px 0;
+      align-items: center;
+    }
+    
+    .product-image {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin-right: 15px;
+    }
+    
+    .order-total {
+      font-weight: bold;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+    
+    .favorite-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+    }
+    
+    .remove-favorite {
+      margin-left: auto;
+      background: #ff3366;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PixelMall</h1>
+    <nav>
+      <a href="index.html">Главная</a>
+      <a href="catalog.html">Каталог</a>
+      <a href="cart.html">Корзина <span class="cart-counter"></span></a>
+      <a href="account.html">Личный кабинет</a>
+    </nav>
+  </header>
+
+  <main class="account-container">
+    <div class="account-header">
+      <h2>Личный кабинет</h2>
+      <button class="btn" id="logout-btn">Выйти</button>
+    </div>
+    
+    <div class="account-tabs">
+      <div class="account-tab active" data-tab="profile">Профиль</div>
+      <div class="account-tab" data-tab="orders">Мои заказы</div>
+      <div class="account-tab" data-tab="favorites">Избранное</div>
+    </div>
+    
+    <div class="account-content">
+      <div id="profile-tab" class="account-tab-content">
+        <div class="profile-info">
+          <button class="edit-btn" id="edit-profile-btn">Редактировать</button>
+          <h3>Личные данные</h3>
+          <p><strong>Имя:</strong> <span id="user-name">Иван Иванов</span></p>
+          <p><strong>Email:</strong> <span id="user-email">user@example.com</span></p>
+          <p><strong>Телефон:</strong> <span id="user-phone">+7 (123) 456-7890</span></p>
+          
+          <div class="edit-form" id="edit-profile-form">
+            <div class="form-group">
+              <label for="edit-name">Имя</label>
+              <input type="text" id="edit-name">
+            </div>
+            <div class="form-group">
+              <label for="edit-phone">Телефон</label>
+              <input type="tel" id="edit-phone">
+            </div>
+            <div class="form-actions">
+              <button class="save-btn" id="save-profile-btn">Сохранить</button>
+              <button class="cancel-btn" id="cancel-edit-btn">Отмена</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="orders-tab" class="account-tab-content" style="display:none">
+        <h3>История заказов</h3>
+        <div id="orders-list">
+          <!-- Заказы будут загружены через JS -->
+        </div>
+      </div>
+      
+      <div id="favorites-tab" class="account-tab-content" style="display:none">
+        <h3>Избранные товары</h3>
+        <div id="favorites-list">
+          <!-- Избранное будет загружено через JS -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Проверка авторизации
+      if (!localStorage.getItem('user')) {
+        window.location.href = 'register.html';
+        return;
+      }
+
+      // Загрузка данных пользователя
+      const user = JSON.parse(localStorage.getItem('user')) || {
+        name: "Иван Иванов",
+        email: "user@example.com",
+        phone: "+7 (123) 456-7890"
+      };
+      
+      document.getElementById('user-name').textContent = user.name;
+      document.getElementById('user-email').textContent = user.email;
+      document.getElementById('user-phone').textContent = user.phone;
+
+      // Переключение вкладок
+      const tabs = document.querySelectorAll('.account-tab');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          tabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          
+          document.querySelectorAll('.account-tab-content').forEach(content => {
+            content.style.display = 'none';
+          });
+          
+          const tabId = this.dataset.tab + '-tab';
+          document.getElementById(tabId).style.display = 'block';
+          
+          if (this.dataset.tab === 'orders') {
+            loadOrders();
+          } else if (this.dataset.tab === 'favorites') {
+            loadFavorites();
+          }
+        });
+      });
+
+      // Редактирование профиля
+      const editBtn = document.getElementById('edit-profile-btn');
+      const editForm = document.getElementById('edit-profile-form');
+      const saveBtn = document.getElementById('save-profile-btn');
+      const cancelBtn = document.getElementById('cancel-edit-btn');
+      const nameSpan = document.getElementById('user-name');
+      const phoneSpan = document.getElementById('user-phone');
+      const editNameInput = document.getElementById('edit-name');
+      const editPhoneInput = document.getElementById('edit-phone');
+
+      editBtn.addEventListener('click', function() {
+        editNameInput.value = nameSpan.textContent;
+        editPhoneInput.value = phoneSpan.textContent;
+        editForm.classList.add('active');
+      });
+
+      cancelBtn.addEventListener('click', function() {
+        editForm.classList.remove('active');
+      });
+
+      saveBtn.addEventListener('click', function() {
+        const newName = editNameInput.value.trim();
+        const newPhone = editPhoneInput.value.trim();
+        
+        if (!newName) {
+          alert('Пожалуйста, введите имя');
+          return;
+        }
+        
+        nameSpan.textContent = newName;
+        phoneSpan.textContent = newPhone;
+        
+        const user = JSON.parse(localStorage.getItem('user'));
+        user.name = newName;
+        user.phone = newPhone;
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        editForm.classList.remove('active');
+        showNotification('Данные успешно сохранены!');
+      });
+
+      // Выход из аккаунта
+      document.getElementById('logout-btn').addEventListener('click', function() {
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
+      });
+
+      // Инициализация первой вкладки
+      loadOrders();
+    });
+
+    function loadOrders() {
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      const container = document.getElementById('orders-list');
+      
+      if (!container) return;
+      
+      container.innerHTML = '';
+      
+      if (orders.length === 0) {
+        container.innerHTML = '<p>У вас пока нет заказов</p>';
+        return;
+      }
+      
+      orders.forEach(order => {
+        const card = document.createElement('div');
+        card.className = 'order-card';
+        card.innerHTML = `
+          <div class="order-header">
+            <div>
+              <strong>Заказ #${order.id}</strong>
+              <span>${order.date}</span>
+            </div>
+            <span class="order-status status-${order.status}">
+              ${getStatusText(order.status)}
+            </span>
+          </div>
+          
+          ${order.items.map(item => {
+            const product = window.products.find(p => p.id === item.id);
+            return `
+              <div class="product-item">
+                <img src="${product ? product.img : ''}" class="product-image">
+                <div>
+                  <div>${product ? product.name : item.name}</div>
+                  <div>${item.price} × ${item.quantity}</div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+          
+          <div class="order-total">
+            Итого: ${order.total ? order.total.toLocaleString('ru-RU') : '0'} ₽
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function loadFavorites() {
+      const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+      const container = document.getElementById('favorites-list');
+      
+      if (!container) return;
+      
+      container.innerHTML = '';
+      
+      if (favorites.length === 0) {
+        container.innerHTML = '<p>В избранном пока нет товаров</p>';
+        return;
+      }
+      
+      favorites.forEach(productId => {
+        const product = window.products.find(p => p.id === productId);
+        if (!product) return;
+        
+        const item = document.createElement('div');
+        item.className = 'favorite-item';
+        item.innerHTML = `
+          <img src="${product.img}" class="product-image">
+          <div>
+            <div>${product.name}</div>
+            <div>${product.price.toLocaleString('ru-RU')} ₽</div>
+          </div>
+          <button class="remove-favorite" data-id="${product.id}">Удалить</button>
+        `;
+        container.appendChild(item);
+      });
+      
+      // Обработчики удаления из избранного
+      document.querySelectorAll('.remove-favorite').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const productId = parseInt(this.dataset.id);
+          let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+          favorites = favorites.filter(id => id !== productId);
+          localStorage.setItem('favorites', JSON.stringify(favorites));
+          showNotification('Товар удален из избранного');
+          loadFavorites();
+        });
+      });
+    }
+
+    function getStatusText(status) {
+      const statusMap = {
+        'new': 'Новый',
+        'completed': 'Завершен',
+        'cancelled': 'Отменен'
+      };
+      return statusMap[status] || status;
+    }
+
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

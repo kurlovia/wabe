@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "email": "user@example.com",
+    "password": "password123",
+    "name": "Иван Иванов",
+    "phone": "+7 (123) 456-78-90",
+    "address": "г. Москва, ул. Ленина, д. 1"
+  },
+  {
+    "email": "sysoeva18mariya@gmail.com",
+    "password": "укпу",
+    "id": 2
+  }
+]

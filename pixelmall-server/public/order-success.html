@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Заказ оформлен — PixelMall</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #f0f2f5;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 600px;
+      margin: 100px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .check-icon {
+      font-size: 60px;
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+    h2 {
+      color: #333;
+      margin-top: 0;
+    }
+    .buttons {
+      margin-top: 30px;
+    }
+    .btn {
+      background: #ff3366;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      margin: 0 10px;
+      display: inline-block;
+    }
+    .btn:hover {
+      background: #e62e5c;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PixelMall</h1>
+    <nav>
+      <a href="index.html">Главная</a>
+      <a href="catalog.html">Каталог</a>
+      <a href="cart.html">Корзина <span class="cart-counter"></span></a>
+      <a href="account.html">Личный кабинет</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="check-icon">✔</div>
+    <h2>Заказ успешно оформлен!</h2>
+    <p>Номер вашего заказа: #<span id="order-id">654608</span></p>
+    <p>Спасибо за покупку! Мы свяжемся с вами в ближайшее время.</p>
+    <div class="buttons">
+      <a href="index.html" class="btn">Продолжить покупки</a>
+      <a href="account.html#orders-tab" class="btn">Мои заказы</a>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const orderId = Math.floor(Math.random() * 1000000);
+      document.getElementById('order-id').textContent = orderId;
+    });
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>

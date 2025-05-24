@@ -1,0 +1,12 @@
+<h2>LocalStorage данные</h2>
+<pre id="debug-output"></pre>
+<script>
+  const debugOutput = document.getElementById('debug-output');
+  let output = '';
+  for (let key in localStorage) {
+    if (localStorage.hasOwnProperty(key)) {
+      output += `${key}: ${localStorage.getItem(key)}\n\n`;
+    }
+  }
+  debugOutput.textContent = output;
+</script>

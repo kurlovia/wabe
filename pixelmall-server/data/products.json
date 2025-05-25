@@ -1,0 +1,58 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Смартфон PixelNova X",
+      "price": 29990,
+      "img": "images/6609432673.jpg",
+      "category": "phones",
+      "description": "Флагманский смартфон с лучшей камерой",
+      "specs": "6.5\" AMOLED, 128ГБ, 8ГБ ОЗУ"
+    },
+    {
+      "id": 2,
+      "name": "Ноутбук ZBook Pro",
+      "price": 65990,
+      "img": "images/6827147955.jpg",
+      "category": "laptops",
+      "description": "Мощный ноутбук для работы и игр",
+      "specs": "Intel i7, 16ГБ, SSD 512ГБ, NVIDIA RTX 3050"
+    },
+    {
+      "id": 3,
+      "name": "Наушники AirSound Pro",
+      "price": 5990,
+      "img": "images/6088634008.jpg",
+      "category": "accessories",
+      "description": "Беспроводные наушники с шумоподавлением",
+      "specs": "Bluetooth 5.0, автономность 30ч"
+    },
+    {
+      "id": 4,
+      "name": "Смартфон Apple iPhone 16",
+      "price": 70990,
+      "img": "images/phone.jpg",
+      "category": "phones",
+      "description": "Новый базовый флагман компании Apple",
+      "specs": "6.1\" AMOLED, 128ГБ, 8ГБ ОЗУ"
+    },
+    {
+      "id": 5,
+      "name": "Наушники Major IV",
+      "price": 8599,
+      "img": "images/7277443430.jpg",
+      "category": "accessories",
+      "description": "Marshall Major IV – классика среди беспроволных наушников",
+      "specs": "Bluetooth 5.0, автономность 50ч"
+    },
+    {
+      "id": 6,
+      "name": "Ноутбук IRBIS Breeze",
+      "price": 22000,
+      "img": "images/7309205809.jpg",
+      "category": "laptops",
+      "description": "Идеальное решение для тех, кто ищет мощное и функциональное устройство",
+      "specs": "Intel N, 16ГБ, SSD 512ГБ, Intel UHD Graphics"
+    }
+  ]
+}

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>PixelMall — Главная</title>
-  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* Основные стили */
     body {
@@ -334,6 +334,25 @@
       color: #666;
       margin: 0;
     }
+    
+    /* Уведомления */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #4CAF50;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1000;
+      transform: translateX(200%);
+      transition: transform 0.3s ease-out;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
   </style>
 </head>
 <body>
@@ -342,7 +361,7 @@
     <nav>
       <a href="index.html">Главная</a>
       <a href="catalog.html">Каталог</a>
-      <a href="cart.html">Корзина <span class="cart-counter"></span></a>
+      <a href="cart.html">Корзина <span class="cart-counter">0</span></a>
       <a href="account.html">Личный кабинет</a>
     </nav>
   </header>
@@ -413,24 +432,120 @@
     </div>
   </section>
 
-  <script src="app.js"></script>
+  <!-- Уведомление -->
+  <div class="notification" id="notification"></div>
+
   <script>
+    // Инициализация глобальных переменных
+    window.products = [
+      {
+      id: 1,
+      name: "Смартфон PixelNova X",
+      price: 29990,
+      img: "images/6609432673.jpg",
+      category: "phones",
+      description: "Флагманский смартфон с лучшей камерой",
+      specs: "6.5\" AMOLED, 128ГБ, 8ГБ ОЗУ"
+    },
+    {
+      id: 2,
+      name: "Ноутбук ZBook Pro",
+      price: 65990,
+      img: "images/6827147955.jpg",
+      category: "laptops",
+      description: "Мощный ноутбук для работы и игр",
+      specs: "Intel i7, 16ГБ, SSD 512ГБ, NVIDIA RTX 3050"
+    },
+    {
+      id: 3,
+      name: "Наушники AirSound Pro",
+      price: 5990,
+      img: "images/6088634008.jpg",
+      category: "accessories",
+      description: "Беспроводные наушники с шумоподавлением",
+      specs: "Bluetooth 5.0, автономность 30ч"
+    },
+    ];
+    
+    window.favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    window.cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // Функции для работы с избранным
+    window.toggleFavorite = function(productId) {
+      const index = window.favorites.indexOf(productId);
+      if (index === -1) {
+        window.favorites.push(productId);
+      } else {
+        window.favorites.splice(index, 1);
+      }
+      localStorage.setItem('favorites', JSON.stringify(window.favorites));
+      return index === -1;
+    };
+    
+    // Функции для работы с корзиной
+    window.addToCart = function(productId) {
+      const product = window.products.find(p => p.id === productId);
+      if (!product) return;
+      
+      const existingItem = window.cart.find(item => item.id === productId);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        window.cart.push({
+          id: productId,
+          name: product.name,
+          price: product.price,
+          img: product.img,
+          quantity: 1
+        });
+      }
+      
+      localStorage.setItem('cart', JSON.stringify(window.cart));
+      updateCartCounter();
+      showNotification('Товар добавлен в корзину!');
+    };
+    
+    // Обновление счетчика корзины
+    function updateCartCounter() {
+      const counter = document.querySelector('.cart-counter');
+      if (counter) {
+        const totalItems = window.cart.reduce((sum, item) => sum + item.quantity, 0);
+        counter.textContent = totalItems;
+      }
+    }
+    
+    // Показ уведомлений
+    function showNotification(message) {
+      const notification = document.getElementById('notification');
+      if (!notification) return;
+      
+      notification.textContent = message;
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Загрузка популярных товаров
     document.addEventListener('DOMContentLoaded', function () {
+      updateCartCounter();
+      
       const container = document.getElementById('popular-products');
       if (!container) return;
-
+      
       // Берём первые 4 товара из window.products
       const popularProducts = window.products.slice(0, 4);
-
+      
       popularProducts.forEach(product => {
         const rating = (Math.random() * 0.5 + 4.5).toFixed(1);
         const reviewsCount = Math.floor(Math.random() * 5000) + 100;
         const oldPrice = Math.round(product.price * (1 + Math.random() * 0.3));
         const discount = Math.round((1 - product.price / oldPrice) * 100);
-
+        
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
-
+        
         productCard.innerHTML = `
           <a href="product.html?id=${product.id}" class="product-link">
             <div class="product-image-container">
@@ -450,14 +565,14 @@
             </div>
           </a>
           <div class="product-actions">
-            <button class="btn-favorite" data-id="${product.id}">♥</button>
+            <button class="btn-favorite ${window.favorites.includes(product.id) ? 'active' : ''}" data-id="${product.id}">♥</button>
             <button class="btn-cart" data-id="${product.id}">В корзину</button>
           </div>
         `;
-
+        
         container.appendChild(productCard);
       });
-
+      
       // Обработчики кнопок "Избранное"
       document.querySelectorAll('.btn-favorite').forEach(btn => {
         btn.addEventListener('click', function (e) {
@@ -469,7 +584,7 @@
           showNotification(isFavorite ? 'В избранное!' : 'Удалено из избранного');
         });
       });
-
+      
       // Обработчики кнопок "В корзину"
       document.querySelectorAll('.btn-cart').forEach(btn => {
         btn.addEventListener('click', function (e) {
